@@ -1,6 +1,6 @@
 {
 	"name": "use-navigation-progress",
-	"version": "2.0.0",
+	"version": "2.1.0",
 	"description": "navigation progress hook for Next.js App Router with real progress tracking",
 	"main": "dist/index.js",
 	"module": "dist/index.esm.js",
@@ -42,8 +42,8 @@
 	},
 	"homepage": "https://github.com/r2hu1/use-navigation-progress#readme",
 	"peerDependencies": {
-		"react": ">=18.0.0",
-		"next": ">=13.0.0"
+		"next": ">=13.0.0",
+		"react": ">=18.0.0"
 	},
 	"devDependencies": {
 		"@rollup/plugin-node-resolve": "^15.0.1",
@@ -51,6 +51,7 @@
 		"@testing-library/react": "^13.4.0",
 		"@testing-library/react-hooks": "^8.0.1",
 		"@types/jest": "^29.0.0",
+		"@types/node": "^24.3.0",
 		"@types/react": "^18.0.0",
 		"@typescript-eslint/eslint-plugin": "^5.0.0",
 		"@typescript-eslint/parser": "^5.0.0",

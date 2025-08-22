@@ -8,7 +8,7 @@ interface NavigationStep {
 interface NavigationProgressOptions {
     /**
      * Timeout in milliseconds before marking navigation as failed
-     * @default 10000
+     * @default 8000
      */
     timeout?: number;
     /**
@@ -29,6 +29,21 @@ interface NavigationProgressOptions {
      * @default 100
      */
     debounceMs?: number;
+    /**
+     * Show progress for hash anchor navigation
+     * @default false
+     */
+    showForHashAnchor?: boolean;
+    /**
+     * Show progress for same page anchors
+     * @default false
+     */
+    showForSamePageAnchor?: boolean;
+    /**
+     * Enable debug logging in development
+     * @default false
+     */
+    debug?: boolean;
 }
 interface NavigationProgressReturn {
     /** Current navigation status */
@@ -47,9 +62,7 @@ interface NavigationProgressReturn {
     reset: () => void;
 }
 /**
- * navigation progress hook for Next.js App Router
- * author: https://github.com/r2hu1
- * source code: https://github.com/r2hu1/use-navigation-progress
+ * Production-ready navigation progress hook for Next.js App Router
  *
  * @param options Configuration options for the hook
  * @returns Navigation progress state and control functions
