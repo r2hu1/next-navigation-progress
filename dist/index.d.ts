@@ -63,6 +63,8 @@ interface NavigationProgressReturn {
 }
 /**
  * Production-ready navigation progress hook for Next.js App Router
+ * author: https://github.com/r2hu1
+ * source: https://github.com/r2hu1/use-navigation-progress
  *
  * @param options Configuration options for the hook
  * @returns Navigation progress state and control functions
