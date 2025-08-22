@@ -8,11 +8,11 @@
 
 ## Features
 
-✅ **Real Progress Tracking** - No fake simulations, tracks actual navigation steps
-✅ **Production Ready** - Performance optimized with RAF, debouncing, and memory leak prevention
-✅ **TypeScript First** - Fully typed with excellent IntelliSense support
-✅ **Flexible Configuration** - Customizable steps, timeouts, and behaviors
-✅ **Zero Dependencies** - Only requires React and Next.js (peer dependencies)
+* ✅ **Real Progress Tracking** - No fake simulations, tracks actual navigation steps
+* ✅ **Production Ready** - Performance optimized with RAF, debouncing, and memory leak prevention
+* ✅ **TypeScript First** - Fully typed with excellent IntelliSense support
+* ✅ **Flexible Configuration** - Customizable steps, timeouts, and behaviors
+* ✅ **Zero Dependencies** - Only requires React and Next.js (peer dependencies)
 
 ## Installation
 
