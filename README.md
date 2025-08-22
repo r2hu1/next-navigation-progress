@@ -248,15 +248,4 @@ We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) f
 
 ## License
 
-MIT © [r2hu1](LICENSE)
-
----
-
-## Changelog
-
-### v1.0.0
-- Initial release
-- Real progress tracking with weighted steps
-- Production-ready with performance optimizations
-- Full TypeScript support
-- Comprehensive test suite
+© [MIT](LICENSE)
