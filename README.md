@@ -232,7 +232,7 @@ useEffect(() => {
 
 ## Demos
 
-I've implemented a custom route announcer in [slate](https://slatee.vercel.app) with this package, you can implement your own top loader, custom route announcer etc with it
+I've implemented a custom route announcer in [slate](https://slateee.vercel.app) with this package, you can implement your own top loader, custom route announcer etc with it
 
 ## License
 
