@@ -220,4 +220,3 @@ function useNavigationProgress(options = {}) {
 }
 
 export { useNavigationProgress as default, useNavigationProgress };
-//# sourceMappingURL=index.esm.js.map

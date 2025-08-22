@@ -11,7 +11,7 @@ export default [
 		output: {
 			file: "dist/index.esm.js",
 			format: "es",
-			sourcemap: true,
+			sourcemap: false,
 		},
 		external,
 		plugins: [
@@ -29,7 +29,7 @@ export default [
 		output: {
 			file: "dist/index.js",
 			format: "cjs",
-			sourcemap: true,
+			sourcemap: false,
 			exports: "named",
 		},
 		external,

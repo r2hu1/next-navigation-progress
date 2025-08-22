@@ -225,4 +225,3 @@ function useNavigationProgress(options = {}) {
 
 exports.default = useNavigationProgress;
 exports.useNavigationProgress = useNavigationProgress;
-//# sourceMappingURL=index.js.map
