@@ -230,20 +230,9 @@ useEffect(() => {
 }, [status, error, reset]);
 ```
 
-## Requirements
+## Demos
 
-- **React**: >=18.0.0
-- **Next.js**: >=13.0.0 (App Router)
-- **TypeScript**: >=4.9.0 (optional but recommended)
-
-## Browser Support
-
-- **Modern browsers** (Chrome 88+, Firefox 87+, Safari 14+, Edge 88+)
-- **Mobile browsers** (iOS Safari 14+, Chrome Mobile 88+)
-
-## Contributing
-
-We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details.
+I've implemented a custom route announcer in [slate](https://slatee.vercel.app) with this package, you can implement your own top loader, custom route announcer etc with it
 
 ## License
 
