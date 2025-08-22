@@ -13,7 +13,6 @@
 ✅ **TypeScript First** - Fully typed with excellent IntelliSense support
 ✅ **Flexible Configuration** - Customizable steps, timeouts, and behaviors
 ✅ **Zero Dependencies** - Only requires React and Next.js (peer dependencies)
-✅ **Lightweight** - < 3KB gzipped
 
 ## Installation
 
