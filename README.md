@@ -1,8 +1,8 @@
-# next-navigation-progress
+# use-navigation-progress
 
 🚀 Production-ready navigation progress hook for Next.js App Router with **real progress tracking**.
 
-[![npm version](https://badge.fury.io/js/next-navigation-progress.svg)](https://www.npmjs.com/package/next-navigation-progress)
+[![npm version](https://badge.fury.io/js/use-navigation-progress.svg)](https://www.npmjs.com/package/use-navigation-progress)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![TypeScript](https://img.shields.io/badge/%3C%2F%3E-TypeScript-%230074c1.svg)](http://www.typescriptlang.org/)
 
@@ -18,18 +18,18 @@
 ## Installation
 
 ```bash
-npm install next-navigation-progress
+npm install use-navigation-progress
 # or
-yarn add next-navigation-progress
+yarn add use-navigation-progress
 # or
-pnpm add next-navigation-progress
+pnpm add use-navigation-progress
 ```
 
 ## Quick Start
 
 ```tsx
 'use client';
-import { useNavigationProgress } from 'next-navigation-progress';
+import { useNavigationProgress } from 'use-navigation-progress';
 
 export default function NavigationBar() {
   const { status, progress } = useNavigationProgress();
@@ -77,7 +77,7 @@ useEffect(() => {
 
 ```tsx
 'use client';
-import { useNavigationProgress } from 'next-navigation-progress';
+import { useNavigationProgress } from 'use-navigation-progress';
 
 export function ProgressBar() {
   const { status, progress, duration, error } = useNavigationProgress({

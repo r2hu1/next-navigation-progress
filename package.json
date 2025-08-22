@@ -1,5 +1,5 @@
 {
-	"name": "next-navigation-progress",
+	"name": "use-navigation-progress",
 	"version": "1.0.0",
 	"description": "navigation progress hook for Next.js App Router with real progress tracking",
 	"main": "dist/index.js",
@@ -35,12 +35,12 @@
 	"license": "MIT",
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/r2hu1/next-navigation-progress.git"
+		"url": "git+https://github.com/r2hu1/use-navigation-progress.git"
 	},
 	"bugs": {
-		"url": "https://github.com/r2hu1/next-navigation-progress/issues"
+		"url": "https://github.com/r2hu1/use-navigation-progress/issues"
 	},
-	"homepage": "https://github.com/r2hu1/next-navigation-progress#readme",
+	"homepage": "https://github.com/r2hu1/use-navigation-progress#readme",
 	"peerDependencies": {
 		"react": ">=18.0.0",
 		"next": ">=13.0.0"
