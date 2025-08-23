@@ -1,6 +1,6 @@
 {
 	"name": "use-navigation-progress",
-	"version": "2.1.3",
+	"version": "2.1.4",
 	"description": "navigation progress hook for Next.js App Router with real progress tracking",
 	"main": "dist/index.js",
 	"module": "dist/index.esm.js",

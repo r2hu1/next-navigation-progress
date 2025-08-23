@@ -5,29 +5,94 @@ Object.defineProperty(exports, '__esModule', { value: true });
 var react = require('react');
 var navigation = require('next/navigation');
 
+/**
+ * Default navigation steps with their respective weights
+ * These represent typical phases of a Next.js page navigation
+ */
 const DEFAULT_STEPS = [
     { name: "route_change", weight: 20 },
     { name: "component_mount", weight: 30 },
     { name: "hydration", weight: 25 },
-    { name: "resources_load", weight: 25 },
+    { name: "resources_load", weight: 25 }, // Images and other resources loading
 ];
+/**
+ * Custom React hook for tracking navigation progress in Next.js applications
+ *
+ * This hook provides real-time progress tracking for page navigation, including
+ * automatic detection of navigation events, customizable progress steps, and
+ * intelligent handling of different navigation types (full page, hash anchors, etc.).
+ *
+ * @param options - Configuration options for the navigation progress tracker
+ * @returns Object containing navigation status, progress, and control functions
+ *
+ * @example
+ * ```tsx
+ * // Basic usage
+ * const { status, progress } = useNavigationProgress();
+ *
+ * return (
+ *   <div>
+ *     {status === 'loading' && (
+ *       <div className="progress-bar">
+ *         <div style={{ width: `${progress}%` }} />
+ *       </div>
+ *     )}
+ *   </div>
+ * );
+ * ```
+ *
+ * @example
+ * ```tsx
+ * // Advanced usage with custom steps
+ * const { status, progress, markStepComplete } = useNavigationProgress({
+ *   steps: [
+ *     { name: "auth_check", weight: 25 },
+ *     { name: "data_fetch", weight: 50 },
+ *     { name: "render", weight: 25 }
+ *   ],
+ *   timeout: 10000,
+ *   debug: true
+ * });
+ *
+ * // Manually mark steps complete
+ * useEffect(() => {
+ *   checkAuthentication().then(() => {
+ *     markStepComplete("auth_check");
+ *   });
+ * }, [markStepComplete]);
+ * ```
+ */
 function useNavigationProgress(options = {}) {
     const { timeout = 8000, steps = DEFAULT_STEPS, enableAutoComplete = true, debounceMs = 100, showForHashAnchor = false, showForSamePageAnchor = false, debug = false, } = options;
+    // Next.js router pathname for detecting route changes
     const pathname = navigation.usePathname();
+    // Component state
     const [status, setStatus] = react.useState("idle");
     const [progress, setProgress] = react.useState(0);
     const [duration, setDuration] = react.useState(0);
     const [error, setError] = react.useState();
     // Refs for cleanup and state management
+    /** Previous pathname to detect route changes */
     const prevPath = react.useRef(pathname);
+    /** Navigation start timestamp */
     const startTime = react.useRef(null);
+    /** Timeout reference for navigation timeout */
     const timeoutRef = react.useRef(null);
+    /** Request animation frame reference for smooth progress updates */
     const rafRef = react.useRef(null);
+    /** Current navigation steps with completion status */
     const stepsRef = react.useRef([]);
+    /** Last progress update timestamp for debouncing */
     const lastUpdateTime = react.useRef(0);
+    /** Flag to prevent state updates after component unmount */
     const isUnmounted = react.useRef(false);
+    /** Flag to prevent multiple simultaneous progress updates */
     react.useRef(false);
-    // Navigation detection utilities
+    /**
+     * Converts a relative URL to an absolute URL
+     * @param url - The URL to convert
+     * @returns Absolute URL string
+     */
     const toAbsoluteURL = react.useCallback((url) => {
         if (typeof window === "undefined")
             return url;
@@ -38,6 +103,12 @@ function useNavigationProgress(options = {}) {
             return url;
         }
     }, []);
+    /**
+     * Checks if navigation is between hash anchors on the same page
+     * @param currentUrl - Current page URL
+     * @param newUrl - Target navigation URL
+     * @returns True if this is hash anchor navigation
+     */
     const isHashAnchor = react.useCallback((currentUrl, newUrl) => {
         try {
             const current = new URL(toAbsoluteURL(currentUrl));
@@ -48,6 +119,12 @@ function useNavigationProgress(options = {}) {
             return false;
         }
     }, [toAbsoluteURL]);
+    /**
+     * Checks if two URLs have the same hostname (ignoring www prefix)
+     * @param currentUrl - Current page URL
+     * @param newUrl - Target navigation URL
+     * @returns True if hostnames match
+     */
     const isSameHostName = react.useCallback((currentUrl, newUrl) => {
         try {
             const current = new URL(toAbsoluteURL(currentUrl));
@@ -59,6 +136,12 @@ function useNavigationProgress(options = {}) {
             return false;
         }
     }, [toAbsoluteURL]);
+    /**
+     * Checks if the new URL is an anchor link within the current page
+     * @param currentUrl - Current page URL
+     * @param newUrl - Target navigation URL
+     * @returns True if this is same-page anchor navigation
+     */
     const isAnchorOfCurrentUrl = react.useCallback((currentUrl, newUrl) => {
         try {
             const currentUrlObj = new URL(currentUrl);
@@ -78,12 +161,20 @@ function useNavigationProgress(options = {}) {
             return false;
         }
     }, []);
+    /**
+     * Determines whether progress should be shown for a given navigation
+     * @param currentUrl - Current page URL
+     * @param newUrl - Target navigation URL
+     * @returns True if progress should be displayed
+     */
     const shouldShowProgress = react.useCallback((currentUrl, newUrl) => {
         if (typeof window === "undefined")
             return true;
         try {
+            // Don't show for external links
             if (!isSameHostName(currentUrl, newUrl))
                 return false;
+            // Don't show for special protocol links
             const isSpecialScheme = [
                 "tel:",
                 "mailto:",
@@ -93,14 +184,17 @@ function useNavigationProgress(options = {}) {
             ].some((scheme) => newUrl.startsWith(scheme));
             if (isSpecialScheme)
                 return false;
+            // Don't show for same URL
             if (currentUrl === newUrl)
                 return false;
             const isHashNav = isHashAnchor(currentUrl, newUrl);
             const isSamePageNav = isAnchorOfCurrentUrl(currentUrl, newUrl);
+            // Respect configuration for hash and same-page navigation
             if (isHashNav && !showForHashAnchor)
                 return false;
             if (isSamePageNav && !showForSamePageAnchor)
                 return false;
+            // Only show for HTTP(S) URLs
             if (!toAbsoluteURL(newUrl).startsWith("http"))
                 return false;
             return true;
@@ -116,14 +210,18 @@ function useNavigationProgress(options = {}) {
         showForSamePageAnchor,
         toAbsoluteURL,
     ]);
-    // Initialize steps
+    // Initialize steps when configuration changes
     react.useEffect(() => {
         stepsRef.current = steps.map((step) => ({
             ...step,
             completed: false,
         }));
     }, [steps]);
-    // Safe state updater that avoids useInsertionEffect conflicts
+    /**
+     * Safe state updater that prevents useInsertionEffect conflicts
+     * Uses setTimeout to defer updates after insertion effects complete
+     * @param updater - Function that updates state
+     */
     react.useCallback((updater) => {
         if (isUnmounted.current)
             return;
@@ -135,7 +233,10 @@ function useNavigationProgress(options = {}) {
             }
         }, 0);
     }, []);
-    // Debounced progress calculation
+    /**
+     * Calculates and updates the current progress percentage
+     * Uses debouncing and RAF for smooth, efficient updates
+     */
     const updateProgress = react.useCallback(() => {
         const now = Date.now();
         if (now - lastUpdateTime.current < debounceMs)
@@ -171,7 +272,9 @@ function useNavigationProgress(options = {}) {
             rafRef.current = null;
         });
     }, [debounceMs, enableAutoComplete, status]);
-    // Reset all state
+    /**
+     * Resets all navigation progress state to initial values
+     */
     const reset = react.useCallback(() => {
         if (timeoutRef.current) {
             clearTimeout(timeoutRef.current);
@@ -193,7 +296,22 @@ function useNavigationProgress(options = {}) {
         }
         startTime.current = null;
     }, [steps]);
-    // Mark specific step as complete
+    /**
+     * Marks a specific navigation step as completed
+     * @param stepName - Name of the step to mark as complete
+     *
+     * @example
+     * ```tsx
+     * const { markStepComplete } = useNavigationProgress();
+     *
+     * // Mark data fetching complete
+     * useEffect(() => {
+     *   fetchData().then(() => {
+     *     markStepComplete("data_fetch");
+     *   });
+     * }, [markStepComplete]);
+     * ```
+     */
     const markStepComplete = react.useCallback((stepName) => {
         if (isUnmounted.current)
             return;
@@ -207,7 +325,10 @@ function useNavigationProgress(options = {}) {
             updateProgress();
         }
     }, [updateProgress, debug]);
-    // Start navigation tracking
+    /**
+     * Starts navigation progress tracking
+     * Called automatically when navigation is detected
+     */
     const startNavigation = react.useCallback(() => {
         if (isUnmounted.current)
             return;
@@ -241,7 +362,22 @@ function useNavigationProgress(options = {}) {
             }, 0);
         }, timeout);
     }, [reset, timeout, markStepComplete, debug]);
-    // Finish navigation
+    /**
+     * Manually completes the navigation progress
+     * Can be called to force completion when navigation is done
+     *
+     * @example
+     * ```tsx
+     * const { finish } = useNavigationProgress();
+     *
+     * // Force completion after critical resources load
+     * useEffect(() => {
+     *   if (allCriticalResourcesLoaded) {
+     *     finish();
+     *   }
+     * }, [allCriticalResourcesLoaded, finish]);
+     * ```
+     */
     const finish = react.useCallback(() => {
         if (isUnmounted.current)
             return;
@@ -271,14 +407,21 @@ function useNavigationProgress(options = {}) {
             }
         }, 0);
     }, []);
-    // Find closest anchor element
+    /**
+     * Finds the closest anchor element in the DOM tree
+     * @param element - Starting HTML element
+     * @returns Closest anchor element or null
+     */
     const findClosestAnchor = react.useCallback((element) => {
         while (element && element.tagName.toLowerCase() !== "a") {
             element = element.parentElement;
         }
         return element;
     }, []);
-    // Handle click events for navigation detection
+    /**
+     * Handles click events to detect link navigation
+     * @param event - Mouse click event
+     */
     const handleClick = react.useCallback((event) => {
         if (typeof window === "undefined" || isUnmounted.current)
             return;
@@ -301,7 +444,7 @@ function useNavigationProgress(options = {}) {
             startNavigation();
         }
     }, [findClosestAnchor, shouldShowProgress, startNavigation]);
-    // Route change detection
+    // Detect route changes via Next.js pathname changes
     react.useEffect(() => {
         if (pathname !== prevPath.current) {
             prevPath.current = pathname;
@@ -310,11 +453,12 @@ function useNavigationProgress(options = {}) {
             }
         }
     }, [pathname, status, startNavigation]);
-    // Setup event listeners
+    // Setup global event listeners for navigation detection
     react.useEffect(() => {
         if (typeof window === "undefined")
             return;
         document.addEventListener("click", handleClick);
+        // Intercept history API calls
         const originalPushState = window.history.pushState;
         const originalReplaceState = window.history.replaceState;
         window.history.pushState = function (...args) {
@@ -337,7 +481,7 @@ function useNavigationProgress(options = {}) {
             window.history.replaceState = originalReplaceState;
         };
     }, [handleClick, finish]);
-    // Auto-detect component mount
+    // Auto-detect component mount step
     react.useEffect(() => {
         if (status === "loading" && !isUnmounted.current) {
             const timer = setTimeout(() => {
@@ -346,13 +490,14 @@ function useNavigationProgress(options = {}) {
             return () => clearTimeout(timer);
         }
     }, [status, markStepComplete]);
-    // Auto-detect hydration and resource loading
+    // Auto-detect hydration and resource loading steps
     react.useEffect(() => {
         if (!enableAutoComplete || status !== "loading" || isUnmounted.current)
             return;
         let hydrationTimer;
         let resourceTimer;
         let fallbackTimer;
+        // Mark hydration complete after component mount
         hydrationTimer = setTimeout(() => {
             if (isUnmounted.current)
                 return;
@@ -361,6 +506,7 @@ function useNavigationProgress(options = {}) {
                 markStepComplete("hydration");
             }
         }, 100);
+        // Check if resources (mainly images) are loaded
         const checkResources = () => {
             if (isUnmounted.current)
                 return;
@@ -382,6 +528,7 @@ function useNavigationProgress(options = {}) {
             }
         };
         setTimeout(checkResources, 150);
+        // Fallback timer to complete all remaining steps
         fallbackTimer = setTimeout(() => {
             if (isUnmounted.current)
                 return;
@@ -399,7 +546,7 @@ function useNavigationProgress(options = {}) {
             clearTimeout(fallbackTimer);
         };
     }, [status, enableAutoComplete, markStepComplete]);
-    // Cleanup on unmount
+    // Cleanup on component unmount
     react.useEffect(() => {
         return () => {
             isUnmounted.current = true;
